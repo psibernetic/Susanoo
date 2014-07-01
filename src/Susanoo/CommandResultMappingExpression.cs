@@ -75,7 +75,9 @@ namespace Susanoo
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public virtual ICommandProcessor<TFilter, TResult> PrepareCommand()
         {
-            return new CommandProcessor<TFilter, TResult>(this);
+            return (typeof(TResult).GetInterface("ITuple") == null) 
+                ? new SingleResultSetCommandProcessor<TFilter, TResult>(this) as ICommandProcessor<TFilter, TResult>
+                : new MultipleResultSetCommandProcessor<TFilter, TResult>(this) as ICommandProcessor<TFilter, TResult>;
         }
 
         /// <summary>
@@ -101,13 +103,25 @@ namespace Susanoo
         /// <summary>
         /// Maps the declarative properties.
         /// </summary>
-        protected virtual void MapDeclarativeProperties()
+        protected void MapDeclarativeProperties()
         {
-            foreach (var item in new ComponentModelMetadataExtractor()
+            foreach (var item in this.PropertyMetadataExtractor
                 .FindAllowedProperties(typeof(TResult), Susanoo.DescriptorActions.Read))
             {
                 mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.Alias));
             }
+        }
+
+        private IPropertyMetadataExtractor _PropertyMetadataExtractor = new ComponentModelMetadataExtractor();
+
+        /// <summary>
+        /// Gets or sets the property metadata extractor.
+        /// </summary>
+        /// <value>The property metadata extractor.</value>
+        protected virtual IPropertyMetadataExtractor PropertyMetadataExtractor
+        {
+            get { return this._PropertyMetadataExtractor; }
+            set { if (value != null) this._PropertyMetadataExtractor = value; }
         }
     }
 }

@@ -37,6 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Susanoo.Core.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>ExtendedCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -67,7 +68,8 @@
     <Compile Include="CommandBuilder.cs" />
     <Compile Include="CommandExpression.cs" />
     <Compile Include="CommandManager.cs" />
-    <Compile Include="CommandProcessor.cs" />
+    <Compile Include="MultipleResultSetCommandProcessor.cs" />
+    <Compile Include="SingleResultSetCommandProcessor.cs" />
     <Compile Include="CommandResultMappingExpression.cs" />
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="ExpressionExtensions.cs" />

@@ -65,7 +65,7 @@ namespace Susanoo.Mapping
             string propertyName,
             Action<IPropertyMappingConfiguration> options)
         {
-            var propInfo = typeof (TResult).GetProperty(propertyName);
+            var propInfo = typeof (TResult).GetTypeInfo().GetProperty(propertyName);
 
             if (!_mappingActions.ContainsKey(propertyName))
                 TryAddMapping(new KeyValuePair<PropertyInfo, PropertyMapping>(propInfo, new PropertyMapping(propInfo, propertyName)));
@@ -91,7 +91,7 @@ namespace Susanoo.Mapping
         /// </summary>
         protected void MapDeclarativeProperties()
         {
-            foreach (var item in _propertyMetadataExtractor.FindAllowedProperties(typeof(TResult)))
+            foreach (var item in _propertyMetadataExtractor.FindAllowedProperties(typeof(TResult).GetTypeInfo()))
             {
                 TryAddMapping(item);
             }

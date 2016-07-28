@@ -44,11 +44,11 @@ namespace Susanoo.Transforms
 					additionalColumns = ", " + additionalColumns;
 			}
 
-			const string format = @"SELECT *{1}
-FROM (
-	{0}
-) susanoo_query_wrapper
-WHERE 1=1";
+			const string format = "SELECT *{1}" + "\r\n" +
+                                  "FROM (" + "\r\n" +
+                                  "{0} " + "\r\n" +
+                                  ") susanoo_query_wrapper" + "\r\n" +
+                                  "WHERE 1=1" + "\r\n";
 
 			return new CommandTransform("Query Wrapper", info =>
 				new ExecutableCommandInfo

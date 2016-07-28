@@ -5,8 +5,11 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+
+#if !DOTNETCORE
 using System.Reflection;
 using System.Reflection.Emit;
+#endif
 
 #endregion
 
@@ -61,12 +64,13 @@ namespace Susanoo
                 {typeof (DateTimeOffset?), DbType.DateTimeOffset}
             });
 
+#if !DOTNETCORE
         /// <summary>
         /// Gets the expression assembly that contains runtime compiled methods used for mappings.
         /// </summary>
         /// <value>The expression assembly.</value>
-        private static readonly AssemblyBuilder ExpressionAssembly = AppDomain.CurrentDomain
-            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), AssemblyBuilderAccess.RunAndSave);
+        private static readonly AssemblyBuilder ExpressionAssembly = AssemblyBuilder
+            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), AssemblyBuilderAccess.Run);
 
         /// <summary>
         /// Gets the dynamic namespace.
@@ -74,7 +78,8 @@ namespace Susanoo
         /// <value>The dynamic namespace.</value>
         internal static ModuleBuilder DynamicNamespace { get; } =
             ExpressionAssembly
-            .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
+            .DefineDynamicModule("Susanoo.DynamicExpression");
+#endif
 
         /// <summary>
         /// Begins the CommandBuilder definition process using a Fluent API implementation.
@@ -118,14 +123,6 @@ namespace Susanoo
                 typeToUse = dataType;
 
             return typeToUse;
-        }
-
-        /// <summary>
-        /// Saves the dynamic assembly to disk.
-        /// </summary>
-        public static void SaveDynamicAssemblyToDisk()
-        {
-            ExpressionAssembly.Save("Susanoo.DynamicExpression.Loader.dll");
         }
 
         private static CommandManager _instance;

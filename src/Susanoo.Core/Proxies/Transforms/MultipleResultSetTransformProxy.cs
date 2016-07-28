@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Susanoo.Command;
-using Susanoo.Exceptions;
 using Susanoo.Processing;
 #if !NETFX40
 using System.Threading;

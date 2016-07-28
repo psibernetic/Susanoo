@@ -372,13 +372,13 @@ namespace Susanoo.Command
         {
             var parameters = new List<DbParameter>();
 
-            if (typeof(TFilter).IsValueType || filter != null)
+            if (typeof(TFilter).GetTypeInfo().IsValueType || filter != null)
             {
                 if (_explicitInclusionMode)
                 {
                     foreach (var item in _parameterInclusions)
                     {
-                        var propInfo = filter.GetType()
+                        var propInfo = filter.GetType().GetTypeInfo()
                             .GetProperty(item.Key, BindingFlags.Instance | BindingFlags.Public);
                         var param = databaseManager.CreateParameter();
 
@@ -421,7 +421,7 @@ namespace Susanoo.Command
                 {
                     var implicitProperties = _propertyMetadataExtractor
                         .FindAllowedProperties(
-                            filter.GetType(),
+                            filter.GetType().GetTypeInfo(),
                             DescriptorActions.Insert | DescriptorActions.Update | DescriptorActions.Delete,
                             _parameterInclusions.Select(p => p.Key).ToArray(),
                             _parameterExclusions.ToArray());

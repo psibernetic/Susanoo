@@ -20,6 +20,13 @@ build:
   verbosity: minimal
 after_build:
 - cmd: >-
+    dotnet test test/Susanoo.Core.Tests
+
+    dotnet test test/Susanoo.Transforms.Tests
+
+    dotnet test test/Susanoo.Transforms.SqlServer.Tests
+
+
     dotnet pack src\Susanoo.Core --output artifacts
 
     dotnet pack src\Susanoo.Transforms --output artifacts
@@ -29,13 +36,7 @@ after_build:
     dotnet pack src\Susanoo.DependencyInjection.AutoFac --output artifacts
 
     dotnet pack src\Susanoo.DependencyInjection.StructureMap --output artifacts
-test_script:
-- cmd: >-
-    dotnet test test/Susanoo.Core.Tests
-
-    dotnet test test/Susanoo.Transforms.Tests
-
-    dotnet test test/Susanoo.Transforms.SqlServer.Tests
+test: off
 artifacts:
-- path: src\artifacts\*.nupkg
+- path: artifacts\*.nupkg
   name: nupkgs

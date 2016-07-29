@@ -79,6 +79,11 @@ namespace Susanoo
         /// <returns>DbParameter.</returns>
         DbParameter CreateInputParameter(string parameterName, DbType parameterType, object value);
 
+#if DOTNETCORE
+        void BeginTransaction(IsolationLevel isolationLevel);
+
+        DbTransaction Transaction { get; set; }
+#endif
         /// <summary>
         /// Opens the connection.
         /// </summary>

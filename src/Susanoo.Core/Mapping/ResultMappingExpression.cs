@@ -77,6 +77,18 @@ namespace Susanoo.Mapping
             return this;
         }
 
+        public virtual IResultMappingExpression<TFilter, TResult> MapPropertyToColumn(
+            Expression<Func<TResult, object>> propertyExpression, string columnName)
+        {
+            return ForProperty(propertyExpression, configuration => configuration.UseAlias(columnName));
+        }
+
+        public virtual IResultMappingExpression<TFilter, TResult> MapPropertyToColumn(
+            string propertyName, string columnName)
+        {
+            return ForProperty(propertyName, configuration => configuration.UseAlias(columnName));
+        }
+
         /// <summary>
         /// Exports this instance.
         /// </summary>

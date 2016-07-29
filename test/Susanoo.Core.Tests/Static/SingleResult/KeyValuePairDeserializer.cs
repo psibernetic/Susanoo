@@ -22,8 +22,8 @@ namespace Susanoo.Tests.Static.SingleResult
                 .DefineResults<KeyValuePair<int, string>>()
                 .ForResults(whenMapping =>
                 {
-                    whenMapping.ForProperty(result => result.Key, then => then.UseAlias("Int"));
-                    whenMapping.ForProperty(result => result.Value, then => then.UseAlias("String"));
+                    whenMapping.MapPropertyToColumn(pair => pair.Key, "Int");
+                    whenMapping.MapPropertyToColumn(pair => pair.Value, "String");
                 })
                 .Realize()
                 .Execute(_databaseManager);
@@ -64,10 +64,10 @@ namespace Susanoo.Tests.Static.SingleResult
         {
             var results = CommandManager.Instance.DefineCommand("SELECT Int, String FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<KeyValuePair<string, string>>()
-                .ForResults(expression =>
+                .ForResults(result =>
                 {
-                    expression.ForProperty(pair => pair.Key, configuration => configuration.UseAlias("Int"));
-                    expression.ForProperty(pair => pair.Value, configuration => configuration.UseAlias("String"));
+                    result.MapPropertyToColumn(pair => pair.Key, "Int");
+                    result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
                 .Realize()
                 .Execute(_databaseManager);

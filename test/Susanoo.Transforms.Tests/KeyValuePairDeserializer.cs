@@ -25,12 +25,10 @@ namespace Susanoo.Transforms.Tests
                 .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
                 .SendNullValues(NullValueMode.FilterOnlyFull)
                 .DefineResults<KeyValuePair<string, string>>()
-                .ForResults(expression =>
+                .ForResults(result =>
                 {
-                    expression.ForProperty(pair => pair.Key,
-                        configuration => configuration.UseAlias("Int"));
-                    expression.ForProperty(pair => pair.Value,
-                        configuration => configuration.UseAlias("String"));
+                    result.MapPropertyToColumn(pair => pair.Key, "Int");
+                    result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
                 .Realize()
                 .ApplyTransforms(source => new[]
@@ -70,10 +68,8 @@ namespace Susanoo.Transforms.Tests
                 .DefineResults<KeyValuePair<string, string>>()
                 .ForResults(result =>
                 {
-                    result.ForProperty(pair => pair.Key,
-                        configuration => configuration.UseAlias("Int"));
-                    result.ForProperty(pair => pair.Value,
-                        configuration => configuration.UseAlias("String"));
+                    result.MapPropertyToColumn(pair => pair.Key, "Int");
+                    result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
                 .Realize()
                 .ApplyTransforms(source => new[]
@@ -106,12 +102,10 @@ namespace Susanoo.Transforms.Tests
                     .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
                     .SendNullValues(NullValueMode.FilterOnlyFull)
                     .DefineResults<KeyValuePair<string, string>>()
-                    .ForResults(expression =>
+                    .ForResults(result =>
                     {
-                        expression.ForProperty(pair => pair.Key,
-                            configuration => configuration.UseAlias("Int"));
-                        expression.ForProperty(pair => pair.Value,
-                            configuration => configuration.UseAlias("String"));
+                        result.MapPropertyToColumn(pair => pair.Key, "Int");
+                        result.MapPropertyToColumn(pair => pair.Value, "String");
                     })
                     .Realize()
                     .ApplyTransforms(source => new[]

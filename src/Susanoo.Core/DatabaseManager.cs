@@ -405,7 +405,12 @@ namespace Susanoo
         {
             return CreateParameter(parameterName, ParameterDirection.Input, parameterType, value);
         }
-
+#if DOTNETCORE
+        public virtual void BeginTransaction(System.Data.IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+        {
+            Transaction = Connection.BeginTransaction(isolationLevel);
+        }
+#endif
         /// <summary>
         /// Opens the connection.
         /// </summary>
@@ -513,6 +518,10 @@ namespace Susanoo
             command.CommandText = commandText;
 
             command.CommandTimeout = Convert.ToInt32(commandTimeout.TotalSeconds);
+
+#if DOTNETCORE
+            command.Transaction = Transaction;
+#endif
 
             if (parameters != null)
                 foreach (var param in parameters)

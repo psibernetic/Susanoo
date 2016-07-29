@@ -4,8 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Susanoo.Mapping.Properties;
 
-namespace Susanoo.Mapping.Properties
+namespace Susanoo.Mapping
 {
     /// <summary>
     /// Base for mapping to handle common functionality

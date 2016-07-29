@@ -21,12 +21,10 @@ namespace Susanoo.Transforms.SqlServer.Tests
                 .ExcludeProperty(o => o.Value)
                 .SendNullValues(NullValueMode.FilterOnlyFull)
                 .DefineResults<KeyValuePair<string, string>>()
-                .ForResults(expression =>
+                .ForResults(result =>
                 {
-                    expression.ForProperty(pair => pair.Key,
-                        configuration => configuration.UseAlias("Int"));
-                    expression.ForProperty(pair => pair.Value,
-                        configuration => configuration.UseAlias("String"));
+                    result.MapPropertyToColumn(pair => pair.Key, "Int");
+                    result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
                 .Realize()
                 .ApplyTransforms(source => new[]
@@ -57,12 +55,10 @@ namespace Susanoo.Transforms.SqlServer.Tests
                 .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
                 .SendNullValues(NullValueMode.FilterOnlyFull)
                 .DefineResults<KeyValuePair<string, string>>()
-                .ForResults(expression =>
+                .ForResults(result =>
                 {
-                    expression.ForProperty(pair => pair.Key,
-                        configuration => configuration.UseAlias("Int"));
-                    expression.ForProperty(pair => pair.Value,
-                        configuration => configuration.UseAlias("String"));
+                    result.MapPropertyToColumn(pair => pair.Key, "Int");
+                    result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
                 .Realize()
                 .ApplyTransforms(source => new[]

@@ -182,3 +182,4 @@ UpgradeLog*.htm
 FakesAssemblies/
 src/Susanoo.sln.GhostDoc.xml
 *.DotSettings
+/tools/Cake

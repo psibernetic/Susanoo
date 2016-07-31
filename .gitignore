@@ -185,3 +185,4 @@ src/Susanoo.sln.GhostDoc.xml
 /tools/Cake
 
 project.lock.json
+/tools/packages.config.md5sum

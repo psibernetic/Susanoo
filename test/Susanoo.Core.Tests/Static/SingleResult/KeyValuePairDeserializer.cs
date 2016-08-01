@@ -2,8 +2,9 @@
 
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
+using Susanoo;
+using static Susanoo.SusanooCommander;
 
 #endregion
 
@@ -18,14 +19,15 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValuePairMap()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT Int, String FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults<KeyValuePair<int, string>>()
+            var results = 
+                DefineCommand("SELECT Int, String FROM #DataTypeTable;")
+                .WithResultsAs<KeyValuePair<int, string>>()
                 .ForResults(whenMapping =>
                 {
                     whenMapping.MapPropertyToColumn(pair => pair.Key, "Int");
                     whenMapping.MapPropertyToColumn(pair => pair.Value, "String");
                 })
-                .Realize()
+                .Compile()
                 .Execute(_databaseManager);
 
             Assert.IsNotNull(results);
@@ -40,14 +42,14 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValuePairMapReverse()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT String, Int FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults<KeyValuePair<int, string>>()
-                .ForResults(expression =>
+            var results =
+                DefineCommand("SELECT String, Int FROM #DataTypeTable;")
+                .WithResultsAs<KeyValuePair<int, string>>(whenMapping =>
                 {
-                    expression.ForProperty(pair => pair.Key, configuration => configuration.UseAlias("Int"));
-                    expression.ForProperty(pair => pair.Value, configuration => configuration.UseAlias("String"));
+                    whenMapping.MapPropertyToColumn(o => o.Key, "Int");
+                    whenMapping.MapPropertyToColumn(o => o.Value, "String");
                 })
-                .Realize()
+                .Compile()
                 .Execute(_databaseManager);
 
             Assert.IsNotNull(results);
@@ -62,14 +64,14 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValuePairMapStringCoercion()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT Int, String FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults<KeyValuePair<string, string>>()
-                .ForResults(result =>
+            var results =
+                DefineCommand("SELECT Int, String FROM #DataTypeTable;")
+                .WithResultsAs<KeyValuePair<string, string>>(result =>
                 {
                     result.MapPropertyToColumn(pair => pair.Key, "Int");
                     result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
-                .Realize()
+                .Compile()
                 .Execute(_databaseManager);
 
             Assert.IsNotNull(results);
@@ -84,7 +86,7 @@ namespace Susanoo.Tests.Static.SingleResult
         //[Test(Description = "Tests that results correctly map data to CLR types.")]
         //public void KeyValueWithWhereFilter()
         //{
-        //    var results = CommandManager.Instance.DefineCommand<KeyValuePair<string, string>>("SELECT Int, String FROM #DataTypeTable", CommandType.Text)
+        //    var results = DefineCommand<KeyValuePair<string, string>>("SELECT Int, String FROM #DataTypeTable")
         //        .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
         //        .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
         //        .SendNullValues(NullValueMode.FilterOnlyFull)
@@ -101,7 +103,7 @@ namespace Susanoo.Tests.Static.SingleResult
         //            Key = Comparison.Ignore,
         //            Value = Comparison.Equal
         //        })
-        //        .Realize()
+        //        .Compile()
         //        .Execute(_databaseManager, new KeyValuePair<string, string>(null, "varchar"));
 
         //    Assert.IsNotNull(results);
@@ -117,8 +119,8 @@ namespace Susanoo.Tests.Static.SingleResult
         //[Test(Description = "Tests that results correctly map data to CLR types.")]
         //public void KeyValueWithWhereFilterAndOrderBy()
         //{
-        //    var results = CommandManager.Instance.DefineCommand<KeyValuePair<string, string>>(
-        //        @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)", CommandType.Text)
+        //    var results = DefineCommand<KeyValuePair<string, string>>(
+        //        @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)")
         //        .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
         //        .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
         //        .SendNullValues(NullValueMode.FilterOnlyFull)
@@ -132,7 +134,7 @@ namespace Susanoo.Tests.Static.SingleResult
         //        })
         //        .BuildWhereFilter()
         //        .AddOrderByExpression()
-        //        .Realize()
+        //        .Compile()
         //        .Execute(Setup.DatabaseManager, 
         //            new KeyValuePair<string, string>(null, "o"),
         //            new { OrderBy = "Int DESC" });
@@ -150,8 +152,8 @@ namespace Susanoo.Tests.Static.SingleResult
         //[ExpectedException(typeof(FormatException))]
         //public void OrderByThrowsIfUnsafe()
         //{
-        //    CommandManager.Instance.DefineCommand<KeyValuePair<string, string>>(
-        //        @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)", CommandType.Text)
+        //    DefineCommand<KeyValuePair<string, string>>(
+        //        @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)")
         //        .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
         //        .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
         //        .SendNullValues(NullValueMode.FilterOnlyFull)
@@ -165,7 +167,7 @@ namespace Susanoo.Tests.Static.SingleResult
         //        })
         //        .BuildWhereFilter()
         //        .AddOrderByExpression()
-        //        .Realize()
+        //        .Compile()
         //        .Execute(Setup.DatabaseManager,
         //            new KeyValuePair<string, string>(null, "o"),
         //            new { OrderBy = "Int DESC'" });

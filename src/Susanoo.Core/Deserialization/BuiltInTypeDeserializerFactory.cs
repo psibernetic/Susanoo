@@ -21,7 +21,7 @@ namespace Susanoo.Deserialization
         /// <returns><c>true</c> if this instance can deserialize; otherwise, <c>false</c>.</returns>
         public bool CanDeserialize(Type type)
         {
-            return CommandManager.GetDbType(type) != null;
+            return SusanooCommander.GetDbType(type) != null;
         }
 
         /// <summary>

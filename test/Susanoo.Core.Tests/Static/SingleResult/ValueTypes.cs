@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Data;
 using System.Linq;
+using static Susanoo.SusanooCommander;
 
 namespace Susanoo.Tests.Static.SingleResult
 {
@@ -18,9 +18,10 @@ namespace Susanoo.Tests.Static.SingleResult
             DateTime expectedDoB = new DateTime(1980, 1, 1);
             CraeteSingleUser(expectedName, expectedDoB);
             string query = "SELECT [String] As UserName, [DateTime] As DoB FROM #DataTypeTable where [String] = @expectedName";
-            var results = CommandManager.Instance.DefineCommand(query, CommandType.Text)
-                .DefineResults<User>()
-                .Realize()
+            var results = 
+                DefineCommand(query)
+                .WithResultsAs<User>()
+                .Compile()
                 .Execute(_databaseManager, new { expectedName })
                 .ToList();
             
@@ -31,9 +32,9 @@ namespace Susanoo.Tests.Static.SingleResult
 
         private void CraeteSingleUser(string name, DateTime dob)
         {
-            CommandManager.Instance.DefineCommand<dynamic>("INSERT INTO #DataTypeTable ([String], [DateTime]) VALUES(@String, @DateTime);", CommandType.Text)
-                .Realize()
-                .ExecuteNonQuery(_databaseManager, new { String = name, DateTime = dob });
+            DefineCommand("INSERT INTO #DataTypeTable ([String], [DateTime]) VALUES(@String, @DateTime);")
+            .Compile()
+            .ExecuteNonQuery(_databaseManager, new { String = name, DateTime = dob });
         }
     }
 }

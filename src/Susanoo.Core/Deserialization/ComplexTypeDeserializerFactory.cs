@@ -134,7 +134,7 @@ namespace Susanoo.Deserialization
 
 
 #if !DOTNETCORE
-            var type = CommandManager.DynamicNamespace
+            var type = SusanooCommander.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
                     resultType.Name, cacheKey));
 

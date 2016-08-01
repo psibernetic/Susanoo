@@ -20,7 +20,7 @@ namespace Susanoo
         /// <param name="transforms">The transforms.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="ArgumentNullException">At least one transform is required.</exception>
-        public static INoResultCommandProcessor<TFilter> ApplyTransforms<TFilter>(
+        public static INoResultCommandProcessor<TFilter> WithTransforms<TFilter>(
             this INoResultCommandProcessor<TFilter> source, Func<INoResultCommandProcessor<TFilter>, IEnumerable<CommandTransform>> transforms)
         {
             if (transforms == null)

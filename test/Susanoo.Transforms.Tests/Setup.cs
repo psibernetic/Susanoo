@@ -57,7 +57,7 @@ namespace Susanoo.Transforms.Tests
 
         public void Configure()
         {
-            CommandManager.Instance.Bootstrap(new InterceptedSusanooBootstrapper());
+            SusanooCommander.Instance.Bootstrap(new InterceptedSusanooBootstrapper());
 
             //By explicitly opening the connection, it becomes a shared connection.
             DatabaseManager.OpenConnection();
@@ -70,7 +70,7 @@ namespace Susanoo.Transforms.Tests
         /// </summary>
         private static void BuildDataTypeTable()
         {
-            CommandManager.Instance.DefineCommand(
+            SusanooCommander.DefineCommand(
                 @"
                 IF OBJECT_ID('tempdb..#DataTypeTable') IS NOT NULL 
                 BEGIN
@@ -101,7 +101,7 @@ namespace Susanoo.Transforms.Tests
                     IgnoredByDescriptorActionsUpdate = CAST('ignored' AS VARCHAR(7))
                 INTO #DataTypeTable;",
                 CommandType.Text)
-                .Realize()
+                .Compile()
                 .ExecuteNonQuery(DatabaseManager);
         }
     }

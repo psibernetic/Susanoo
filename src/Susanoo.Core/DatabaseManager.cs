@@ -467,7 +467,7 @@ namespace Susanoo
         //}
 
         /// <summary>
-        /// Realizes an instance of the <see cref="DatabaseManager" /> class.
+        /// Compiles an instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         ~DatabaseManager()
         {

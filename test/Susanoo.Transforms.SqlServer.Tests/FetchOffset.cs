@@ -3,6 +3,7 @@ using Susanoo.Command;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using static Susanoo.SusanooCommander;
 
 namespace Susanoo.Transforms.SqlServer.Tests
 {
@@ -13,21 +14,21 @@ namespace Susanoo.Transforms.SqlServer.Tests
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValueWithOffsetFetch()
         {
-            var results = CommandManager.Instance.DefineCommand<KeyValuePair<string, string>>(@"
-                SELECT Int, String
-                FROM (VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)
-                ORDER BY Int", CommandType.Text)
+            var results =
+                DefineCommand<KeyValuePair<string, string>>(
+                    @"SELECT Int, String
+                    FROM (VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)
+                    ORDER BY Int")
                 .ExcludeProperty(o => o.Key)
                 .ExcludeProperty(o => o.Value)
                 .SendNullValues(NullValueMode.FilterOnlyFull)
-                .DefineResults<KeyValuePair<string, string>>()
-                .ForResults(result =>
+                .WithResultsAs<KeyValuePair<string, string>>(result =>
                 {
                     result.MapPropertyToColumn(pair => pair.Key, "Int");
                     result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
-                .Realize()
-                .ApplyTransforms(source => new[]
+                .Compile()
+                .WithTransforms(source => new[]
                 {
                     SqlServerTransforms.OffsetFetch(source)
                 })
@@ -49,19 +50,19 @@ namespace Susanoo.Transforms.SqlServer.Tests
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValueWithWhereFilterAndOffsetFetch()
         {
-            var results = CommandManager.Instance.DefineCommand<KeyValuePair<string, string>>(
-                @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)", CommandType.Text)
+            var results = 
+                DefineCommand<KeyValuePair<string, string>>(
+                    @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)")
                 .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
                 .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
                 .SendNullValues(NullValueMode.FilterOnlyFull)
-                .DefineResults<KeyValuePair<string, string>>()
-                .ForResults(result =>
+                .WithResultsAs<KeyValuePair<string, string>>(result =>
                 {
                     result.MapPropertyToColumn(pair => pair.Key, "Int");
                     result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
-                .Realize()
-                .ApplyTransforms(source => new[]
+                .Compile()
+                .WithTransforms(source => new[]
                 {
                     SqlServerTransforms.QueryWrapperWithTotalRowCount(source),
                     Transforms.WhereFilter(source),
@@ -84,14 +85,14 @@ namespace Susanoo.Transforms.SqlServer.Tests
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void OffsetFetchAndTotalRowCount()
         {
-            var results = CommandManager.Instance.DefineCommand<dynamic>(@"
-                SELECT Int, String
-                FROM (VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)",
-                CommandType.Text)
+            var results = 
+                DefineCommand<dynamic>(
+                    @"SELECT Int, String
+                    FROM (VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)")
                 .SendNullValues(NullValueMode.FilterOnlyFull)
-                .DefineResults<dynamic>()
-                .Realize()
-                .ApplyTransforms(source => new[]
+                .WithResultsAs<dynamic>()
+                .Compile()
+                .WithTransforms(source => new[]
                 {
                     SqlServerTransforms.QueryWrapperWithTotalRowCount(source),
                     Transforms.WhereFilter(source),

@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using Susanoo.Exceptions;
 using System;
-using System.Data;
 using System.Linq;
+using static Susanoo.SusanooCommander;
 
 namespace Susanoo.Tests.Static.SingleResult
 {
@@ -13,9 +13,10 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test]
         public void StringResultTest()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES ('test')) AS MyValues(string)", CommandType.Text)
-                .DefineResults<string>()
-                .Realize()
+            var results = 
+                DefineCommand("SELECT * FROM (VALUES ('test')) AS MyValues(string)")
+                .WithResultsAs<string>()
+                .Compile()
                 .Execute(Setup.DatabaseManager);
 
             Assert.AreEqual(1, results.Count());
@@ -25,9 +26,9 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test]
         public void StringResultNullTest()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(string)", CommandType.Text)
-                .DefineResults<string>()
-                .Realize()
+            var results = DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(string)")
+                .WithResultsAs<string>()
+                .Compile()
                 .Execute(Setup.DatabaseManager);
 
             Assert.AreEqual(1, results.Count());
@@ -37,9 +38,10 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test]
         public void IntNullableTest()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (null), (5)) AS MyValues(int)", CommandType.Text)
-                .DefineResults<int?>()
-                .Realize()
+            var results = 
+                DefineCommand("SELECT * FROM (VALUES (null), (5)) AS MyValues(int)")
+                .WithResultsAs<int?>()
+                .Compile()
                 .Execute(Setup.DatabaseManager);
 
             Assert.AreEqual(2, results.Count());
@@ -52,10 +54,10 @@ namespace Susanoo.Tests.Static.SingleResult
         {
             try
             {
-                CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(int)", CommandType.Text)
-                    .DefineResults<int>()
-                    .Realize()
-                    .Execute(Setup.DatabaseManager);
+                DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(int)")
+                .WithResultsAs<int>()
+                .Compile()
+                .Execute(Setup.DatabaseManager);
             }
             catch (AggregateException ex)
                 when (ex.InnerExceptions.Count == 1
@@ -75,9 +77,10 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test]
         public void IntTest()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (5)) AS MyValues(int)", CommandType.Text)
-                .DefineResults<int>()
-                .Realize()
+            var results =
+                DefineCommand("SELECT * FROM (VALUES (5)) AS MyValues(int)")
+                .WithResultsAs<int>()
+                .Compile()
                 .Execute(Setup.DatabaseManager);
 
             Assert.AreEqual(1, results.Count());

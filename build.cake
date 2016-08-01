@@ -26,8 +26,6 @@ Task("test")
     {
         DotNetCoreTest(file.ToString());
     }
-
-    
 });
 
 Task("default")

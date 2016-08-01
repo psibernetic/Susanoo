@@ -1,8 +1,8 @@
 ﻿#region
 
 using NUnit.Framework;
-using System.Data;
 using System.Linq;
+using static Susanoo.SusanooCommander;
 
 #endregion
 
@@ -18,12 +18,12 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void IdenticalResults2Test()
         {
 
-            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
-                                                       "SELECT * FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults(typeof(TypeTestModel), typeof(TypeTestModel))
+            var results = DefineCommand("SELECT * FROM #DataTypeTable;" +
+                                                       "SELECT * FROM #DataTypeTable;")
+                .WithResultsAs(typeof(TypeTestModel), typeof(TypeTestModel))
                 .ForResults<TypeTestModel>(result =>
                     result.MapPropertyToColumn(model => model.BigInt, "BigInt"))
-                .Realize("IdenticalResults2Test")
+                .Compile("IdenticalResults2Test")
                 .Execute(_databaseManager);
 
             var arrResults = results.Select(e => e.Cast<TypeTestModel>()).ToArray();
@@ -41,15 +41,17 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void LessResultsThanAvailableTest()
         {
 
-            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
-                                                       "SELECT * FROM #DataTypeTable;" +
-                                                       "SELECT * FROM #DataTypeTable;" +
-                                                       "SELECT * FROM #DataTypeTable;" +
-                                                       "SELECT * FROM #DataTypeTable;" +
-                                                       "SELECT * FROM #DataTypeTable;" +
-                                                       "SELECT * FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults(typeof(TypeTestModel), typeof(TypeTestModel))
-                .Realize("LessResultsAreAvailableTest")
+            var results = 
+                DefineCommand(
+                    "SELECT * FROM #DataTypeTable;" +
+                    "SELECT * FROM #DataTypeTable;" +
+                    "SELECT * FROM #DataTypeTable;" +
+                    "SELECT * FROM #DataTypeTable;" +
+                    "SELECT * FROM #DataTypeTable;" +
+                    "SELECT * FROM #DataTypeTable;" +
+                    "SELECT * FROM #DataTypeTable;")
+                .WithResultsAs(typeof(TypeTestModel), typeof(TypeTestModel))
+                .Compile("LessResultsAreAvailableTest")
                 .Execute(_databaseManager).ToArray();
 
             Assert.IsNotNull(results[0]);
@@ -64,16 +66,18 @@ namespace Susanoo.Tests.Static.MultipleResults
         [Test(Description = "Tests that attempting to get more results than available provides null for the additional results.")]
         public void MoreResultsThanAvailableTest()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
-                                                       "SELECT * FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults(typeof(TypeTestModel),
+            var results = 
+                DefineCommand(
+                    "SELECT * FROM #DataTypeTable;" +
+                    "SELECT * FROM #DataTypeTable;")
+                .WithResultsAs(typeof(TypeTestModel),
                     typeof(TypeTestModel),
                     typeof(TypeTestModel),
                     typeof(TypeTestModel),
                     typeof(TypeTestModel),
                     typeof(TypeTestModel),
                     typeof(TypeTestModel))
-                .Realize("MoreResultsAreAvailableTest")
+                .Compile("MoreResultsAreAvailableTest")
                 .Execute(_databaseManager).ToArray();
 
             Assert.IsNotNull(results[0]);

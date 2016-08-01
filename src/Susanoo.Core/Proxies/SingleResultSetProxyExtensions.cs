@@ -22,7 +22,7 @@ namespace Susanoo
         /// <param name="transforms">The transforms.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">At least one transform is required.</exception>
-        public static ISingleResultSetCommandProcessor<TFilter, TResult> ApplyTransforms<TFilter, TResult>(
+        public static ISingleResultSetCommandProcessor<TFilter, TResult> WithTransforms<TFilter, TResult>(
             this ISingleResultSetCommandProcessor<TFilter, TResult> source,
             Func<ISingleResultSetCommandProcessor<TFilter, TResult>, IEnumerable<CommandTransform>> transforms)
         {

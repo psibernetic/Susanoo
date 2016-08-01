@@ -86,7 +86,7 @@ namespace Susanoo.Transforms
             var result = Comparison.Equal;
             if (type == typeof(string))
                 result = CompareMethod.Contains;
-            else if (type == typeof(DateTime) || CommandManager.GetDbType(type) == null)
+            else if (type == typeof(DateTime) || SusanooCommander.GetDbType(type) == null)
                 result = CompareMethod.Ignore;
 
             return result;

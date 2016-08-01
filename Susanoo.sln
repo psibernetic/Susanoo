@@ -15,7 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{DAAAE2B2-572C-485F-844A-B57D959BDEA4}"
 	ProjectSection(SolutionItems) = preProject
-		..\appveyor.yml = ..\appveyor.yml
+		appveyor.yml = appveyor.yml
+		build.cake = build.cake
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Susanoo.Core", "src\Susanoo.Core\Susanoo.Core.xproj", "{66A703D8-F5BE-461E-BC04-A7E0FF3E2029}"

@@ -3,7 +3,7 @@
 using NUnit.Framework;
 using Susanoo.Exceptions;
 using System;
-using System.Data;
+using static Susanoo.SusanooCommander;
 
 #endregion
 
@@ -23,8 +23,9 @@ namespace Susanoo.Tests.Scalar
         [Test]
         public void NullableScalarAcceptsNull()
         {
-            var result = CommandManager.Instance.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
-                .Realize()
+            var result = 
+                DefineCommand("SELECT CAST(NULL AS INT)")
+                .Compile()
                 .ExecuteScalar<int?>(_databaseManager);
 
             Assert.AreEqual(result, null);
@@ -35,9 +36,9 @@ namespace Susanoo.Tests.Scalar
         {
             try
             {
-                CommandManager.Instance.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
-                    .Realize()
-                    .ExecuteScalar<int>(_databaseManager);
+                DefineCommand("SELECT CAST(NULL AS INT)")
+                .Compile()
+                .ExecuteScalar<int>(_databaseManager);
             }
             catch (SusanooExecutionException ex)
             {

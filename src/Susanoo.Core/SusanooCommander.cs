@@ -1,6 +1,8 @@
 ﻿#region
 
 using Susanoo.Command;
+using Susanoo.Processing;
+using Susanoo.ResultSets;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,9 +20,9 @@ namespace Susanoo
     /// <summary>
     /// This class is used as the single entry point when using Susanoo.
     /// </summary>
-    public class CommandManager
+    public class SusanooCommander
     {
-        private CommandManager()
+        private SusanooCommander()
         {
 
         }
@@ -88,9 +90,9 @@ namespace Susanoo
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
+        public static ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType = CommandType.Text)
         {
-            return Bootstrapper
+            return Instance.Bootstrapper
                 .ResolveCommandBuilder()
                 .DefineCommand<TFilter>(commandText, commandType);
         }
@@ -101,9 +103,9 @@ namespace Susanoo
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
+        public static ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType = CommandType.Text)
         {
-            return Bootstrapper
+            return Instance.Bootstrapper
                 .ResolveCommandBuilder()
                 .DefineCommand(commandText, commandType);
         }
@@ -125,7 +127,7 @@ namespace Susanoo
             return typeToUse;
         }
 
-        private static CommandManager _instance;
+        private static SusanooCommander _instance;
 
         private static readonly object SyncRoot = new object();
 
@@ -135,7 +137,7 @@ namespace Susanoo
         /// Gets the instance.
         /// </summary>
         /// <value>The instance.</value>
-        public static CommandManager Instance
+        public static SusanooCommander Instance
         {
             get
             {
@@ -144,7 +146,7 @@ namespace Susanoo
                     lock (SyncRoot)
                     {
                         if (_instance == null)
-                            _instance = new CommandManager();
+                            _instance = new SusanooCommander();
                     }
                 }
 

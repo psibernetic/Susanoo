@@ -2,8 +2,8 @@
 
 using NUnit.Framework;
 using System;
-using System.Data;
 using System.Linq;
+using static Susanoo.SusanooCommander;
 
 #endregion
 
@@ -20,9 +20,10 @@ namespace Susanoo.Tests.Dynamic
         {
             for (int i = 0; i < 500; i ++)
             {
-                var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
-                    .DefineResults<dynamic>()
-                    .Realize()
+                var results = 
+                    DefineCommand("SELECT * FROM #DataTypeTable;")
+                    .WithResultsAs<dynamic>()
+                    .Compile()
                     .Execute(_databaseManager);
 
                 Assert.IsNotNull(results);
@@ -32,9 +33,10 @@ namespace Susanoo.Tests.Dynamic
         [Test(Description = "Tests that dynamic results correctly map data to CLR types.")]
         public void DynamicResultDataTypes()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults<dynamic>()
-                .Realize()
+            var results = 
+                DefineCommand("SELECT * FROM #DataTypeTable;")
+                .WithResultsAs<dynamic>()
+                .Compile()
                 .Execute(_databaseManager);
 
             Assert.IsNotNull(results);

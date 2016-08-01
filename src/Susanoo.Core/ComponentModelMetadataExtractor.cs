@@ -170,7 +170,7 @@ namespace Susanoo
                 var allowedActions = attributes.OfType<AllowedActionsAttribute>().FirstOrDefault();
                 result = (allowedActions == null || (allowedActions.Actions & actions) != 0);
 
-                result = result && !attributes.Any(a => CommandManager.Instance.Bootstrapper.RetrieveIgnoredPropertyAttributes()
+                result = result && !attributes.Any(a => SusanooCommander.Instance.Bootstrapper.RetrieveIgnoredPropertyAttributes()
                     .Contains(a.GetType()));
             }
 

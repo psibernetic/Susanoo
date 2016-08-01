@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using static Susanoo.SusanooCommander;
 
 #endregion
 
@@ -20,18 +21,20 @@ namespace Susanoo.Transforms.Tests
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValueWithWhereFilter()
         {
-            var results = CommandManager.Instance.DefineCommand<KeyValuePair<string, string>>("SELECT Int, String FROM #DataTypeTable", CommandType.Text)
+            var results = 
+                DefineCommand<KeyValuePair<string, string>>(
+                    "SELECT Int, String FROM #DataTypeTable")
                 .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
                 .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
                 .SendNullValues(NullValueMode.FilterOnlyFull)
-                .DefineResults<KeyValuePair<string, string>>()
+                .WithResultsAs<KeyValuePair<string, string>>()
                 .ForResults(result =>
                 {
                     result.MapPropertyToColumn(pair => pair.Key, "Int");
                     result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
-                .Realize()
-                .ApplyTransforms(source => new[]
+                .Compile()
+                .WithTransforms(source => new[]
                 {
                     Transforms.QueryWrapper(),
                     Transforms.WhereFilter(source,
@@ -56,23 +59,21 @@ namespace Susanoo.Transforms.Tests
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValueWithWhereFilterAndOrderBy()
         {
-            var results = CommandManager.Instance
-                .DefineCommand<KeyValuePair<string, string>>(
+            var results = 
+                DefineCommand<KeyValuePair<string, string>>(
                     "SELECT Int, String\n" +
                     "FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four'))\n" +
-                    "\tAS SampleSet(Int, String)",
-                    CommandType.Text)
+                    "\tAS SampleSet(Int, String)")
                 .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
                 .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
                 .SendNullValues(NullValueMode.FilterOnlyFull)
-                .DefineResults<KeyValuePair<string, string>>()
-                .ForResults(result =>
+                .WithResultsAs<KeyValuePair<string, string>>(result =>
                 {
                     result.MapPropertyToColumn(pair => pair.Key, "Int");
                     result.MapPropertyToColumn(pair => pair.Value, "String");
                 })
-                .Realize()
-                .ApplyTransforms(source => new[]
+                .Compile()
+                .WithTransforms(source => new[]
                 {
                     Transforms.QueryWrapper(),
                     Transforms.WhereFilter(source),
@@ -95,28 +96,27 @@ namespace Susanoo.Transforms.Tests
         public void OrderByThrowsIfUnsafe()
         {
             Assert.Catch<FormatException>(() =>
-            {
-                CommandManager.Instance.DefineCommand<KeyValuePair<string, string>>(
-                    @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)", CommandType.Text)
-                    .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
-                    .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
-                    .SendNullValues(NullValueMode.FilterOnlyFull)
-                    .DefineResults<KeyValuePair<string, string>>()
-                    .ForResults(result =>
-                    {
-                        result.MapPropertyToColumn(pair => pair.Key, "Int");
-                        result.MapPropertyToColumn(pair => pair.Value, "String");
-                    })
-                    .Realize()
-                    .ApplyTransforms(source => new[]
-                    {
-                        Transforms.QueryWrapper(),
-                        Transforms.WhereFilter(source),
-                        Transforms.OrderByExpression()
-                    })
-                    .Execute(Setup.DatabaseManager,
-                        new KeyValuePair<string, string>(null, "o"),
-                        new { OrderBy = "Int DESC'" });
+            {                
+                DefineCommand<KeyValuePair<string, string>>(
+                    @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)")
+                .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
+                .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
+                .SendNullValues(NullValueMode.FilterOnlyFull)
+                .WithResultsAs<KeyValuePair<string, string>>(result =>
+                {
+                    result.MapPropertyToColumn(pair => pair.Key, "Int");
+                    result.MapPropertyToColumn(pair => pair.Value, "String");
+                })
+                .Compile()
+                .WithTransforms(source => new[]
+                {
+                    Transforms.QueryWrapper(),
+                    Transforms.WhereFilter(source),
+                    Transforms.OrderByExpression()
+                })
+                .Execute(Setup.DatabaseManager,
+                    new KeyValuePair<string, string>(null, "o"),
+                    new { OrderBy = "Int DESC'" });
             });
 
         }

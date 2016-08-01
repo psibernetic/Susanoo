@@ -4,6 +4,7 @@ using System;
 using NUnit.Framework;
 using System.Data;
 using System.Data.SqlClient;
+using static Susanoo.SusanooCommander;
 
 #endregion
 
@@ -26,7 +27,7 @@ namespace Susanoo.Tests
         {
             try
             {
-                CommandManager.Instance.Bootstrap(new InterceptedSusanooBootstrapper());
+                SusanooCommander.Instance.Bootstrap(new InterceptedSusanooBootstrapper());
 
                 //By explicitly opening the connection, it becomes a shared connection.
                 DatabaseManager.OpenConnection();
@@ -46,7 +47,7 @@ namespace Susanoo.Tests
         /// </summary>
         private void BuildDataTypeTable()
         {
-            CommandManager.Instance.DefineCommand(
+            DefineCommand(
                 @"
                 IF OBJECT_ID('tempdb..#DataTypeTable') IS NOT NULL 
                 BEGIN
@@ -77,7 +78,7 @@ namespace Susanoo.Tests
                     IgnoredByDescriptorActionsUpdate = CAST('ignored' AS VARCHAR(7))
                 INTO #DataTypeTable;",
                 CommandType.Text)
-                .Realize()
+                .Compile()
                 .ExecuteNonQuery(DatabaseManager);
         }
     }

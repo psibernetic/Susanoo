@@ -2,6 +2,7 @@
 using System.Linq;
 using Susanoo.Command;
 using Susanoo.Processing;
+using System;
 #if !NETFX40
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace Susanoo.Proxies.Transforms
             : MultipleResultSetProxy<TFilter>
     {
         private readonly IEnumerable<CommandTransform> _transforms;
+        private readonly Action<IExecutableCommandInfo> _queryInspector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MultipleResultSetTransformProxy{TFilter}"/> class.
@@ -24,10 +26,12 @@ namespace Susanoo.Proxies.Transforms
         /// <param name="source">The source.</param>
         /// <param name="transforms">The transforms.</param>
         public MultipleResultSetTransformProxy(IMultipleResultSetCommandProcessor<TFilter> source,
-            IEnumerable<CommandTransform> transforms)
+            IEnumerable<CommandTransform> transforms,
+            Action<IExecutableCommandInfo> queryInspector = null)
             : base(source)
         {
             _transforms = transforms;
+            _queryInspector = queryInspector ?? new Action<IExecutableCommandInfo>((info) => { });
         }
 
         /// <summary>
@@ -42,6 +46,8 @@ namespace Susanoo.Proxies.Transforms
         {
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
                 commandTransform.Transform(current));
+
+            _queryInspector(transformed);
 
             return Source.Execute(databaseManager, transformed);
         }
@@ -60,6 +66,8 @@ namespace Susanoo.Proxies.Transforms
         {
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
                 commandTransform.Transform(current));
+
+            _queryInspector(transformed);
 
             return await Source.ExecuteAsync(databaseManager, transformed, cancellationToken);
         }

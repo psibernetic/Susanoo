@@ -3,11 +3,6 @@
   "buildOptions": {
     "debugType": "portable"
   },
-  "packOptions": {
-    "summary": "Microsoft SQL Server specific Command Transforms for Susanoo",
-    "tags": [ "Susanoo" ],
-    "licenseUrl": ""
-  },
   "dependencies": {
     "Susanoo.Core": {
       "target": "project"

@@ -42,6 +42,80 @@ namespace Susanoo.Transforms
         }
 
         /// <summary>
+        /// Makes the query gather a count of total records. REQUIRES Sql Server 2012.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="processor">The processor.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="rowCountParameterName">Column name to return the total row count.</param>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        /// <exception cref="System.ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically paged.
+        /// or
+        /// CommandText must contain an Order By clause to be paged.</exception>
+        public static CommandTransform GatherTotalRowCount<TFilter, TResult>(
+            ISingleResultSetCommandProcessor<TFilter, TResult> processor, 
+            string totalRowCountColumnName = "TotalRowCount")
+        {
+            var commandInfo = processor.CommandBuilderInfo;
+
+            if (commandInfo.DbCommandType != CommandType.Text)
+                throw new ArgumentException("Only CommandType.Text CommandBuilder Expressions can be dynamically paged.");
+
+            const string CteCountWrapper =
+                ";WITH SUSANOO_CTE AS(\r\n" +
+                "\t{0})\r\n" +
+                "FROM SUSANOO_CTE query\r\n" +
+                "CROSS APPLY (SELECT {1} = COUNT(*) FROM SUSANOO_CTE) [Count]";
+
+            return new CommandTransform(
+                "TotalRowCount",
+                info => new ExecutableCommandInfo
+                {
+                    CommandText = string.Format(CteCountWrapper, info.CommandText, totalRowCountColumnName),
+                    DbCommandType = info.DbCommandType,
+                    Parameters = info.Parameters
+                });
+        }
+
+        /// <summary>
+        /// Makes the query gather a count of total records as the FIRST result set. REQUIRES Sql Server 2012.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="processor">The processor.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="rowCountParameterName">Column name to return the total row count.</param>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        /// <exception cref="System.ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically paged.
+        /// or
+        /// CommandText must contain an Order By clause to be paged.</exception>
+        public static CommandTransform GatherTotalRowCountSeperate<TFilter, TResult>(
+            ISingleResultSetCommandProcessor<TFilter, TResult> processor,
+            string totalRowCountColumnName = "TotalRowCount")
+        {
+            var commandInfo = processor.CommandBuilderInfo;
+
+            if (commandInfo.DbCommandType != CommandType.Text)
+                throw new ArgumentException("Only CommandType.Text CommandBuilder Expressions can be dynamically paged.");
+
+                        const string format = "SELECT {1} = COUNT(*)" + "\r\n" +
+                                  "FROM (" + "\r\n" +
+                                  "{0} " + "\r\n" +
+                                  ") [count]" + "\r\n\r\n" +
+                                  "{0}";
+
+            return new CommandTransform(
+                "TotalRowCountSeperate",
+                info => new ExecutableCommandInfo
+                {
+                    CommandText = string.Format(format, info.CommandText, totalRowCountColumnName),
+                    DbCommandType = info.DbCommandType,
+                    Parameters = info.Parameters
+                });
+        }
+
+        /// <summary>
         /// Makes the query a paged query using OFFSET/FETCH. REQUIRES Sql Server 2012.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>

@@ -77,7 +77,7 @@ namespace Susanoo.Transforms.Tests
                 {
                     Transforms.QueryWrapper(),
                     Transforms.WhereFilter(source),
-                    Transforms.OrderByExpression()
+                    Transforms.OrderByExpression(),
                 })
                 .Execute(Setup.DatabaseManager,
                     new KeyValuePair<string, string>(null, "o"),

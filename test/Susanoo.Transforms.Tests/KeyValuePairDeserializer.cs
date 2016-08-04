@@ -60,12 +60,12 @@ namespace Susanoo.Transforms.Tests
         public void KeyValueWithWhereFilterAndOrderBy()
         {
             var results = 
-                DefineCommand<KeyValuePair<string, string>>(
+                DefineCommand<Tuple<string, string>>(
                     "SELECT Int, String\n" +
                     "FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four'))\n" +
                     "\tAS SampleSet(Int, String)")
-                .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
-                .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
+                .IncludeProperty(o => o.Item1, parameter => parameter.ParameterName = "Int")
+                .IncludeProperty(o => o.Item2, parameter => parameter.ParameterName = "String")
                 .SendNullValues(NullValueMode.FilterOnlyFull)
                 .WithResultsAs<KeyValuePair<string, string>>(result =>
                 {
@@ -78,9 +78,11 @@ namespace Susanoo.Transforms.Tests
                     Transforms.QueryWrapper(),
                     Transforms.WhereFilter(source),
                     Transforms.OrderByExpression(),
+                },(info) =>
+                {
                 })
                 .Execute(Setup.DatabaseManager,
-                    new KeyValuePair<string, string>(null, "o"),
+                    new Tuple<string, string>(null, "o"),
                     new { OrderBy = "Int DESC" });
 
             Assert.IsNotNull(results);

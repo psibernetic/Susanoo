@@ -37,7 +37,7 @@ namespace Susanoo.Transforms.Tests
                 .WithTransforms(source => new[]
                 {
                     Transforms.QueryWrapper(),
-                    Transforms.WhereFilter(source,
+                    Transforms.WhereFilter(source, typeof(KeyValuePair<string, string>),
                         new
                         {
                             Key = Comparison.Ignore,
@@ -76,7 +76,7 @@ namespace Susanoo.Transforms.Tests
                 .WithTransforms(source => new[]
                 {
                     Transforms.QueryWrapper(),
-                    Transforms.WhereFilter(source),
+                    Transforms.WhereFilter(source, typeof(KeyValuePair<string, string>)),
                     Transforms.OrderByExpression(),
                 },(info) =>
                 {
@@ -113,7 +113,7 @@ namespace Susanoo.Transforms.Tests
                 .WithTransforms(source => new[]
                 {
                     Transforms.QueryWrapper(),
-                    Transforms.WhereFilter(source),
+                    Transforms.WhereFilter(source, typeof(KeyValuePair<string, string>)),
                     Transforms.OrderByExpression()
                 })
                 .Execute(Setup.DatabaseManager,

@@ -65,7 +65,7 @@ namespace Susanoo.Transforms.SqlServer.Tests
                 .WithTransforms(source => new[]
                 {
                     SqlServerTransforms.QueryWrapperWithTotalRowCount(source),
-                    Transforms.WhereFilter(source),
+                    Transforms.WhereFilter(source, typeof(KeyValuePair<string, string>)),
                     Transforms.OrderByExpression(),
                     SqlServerTransforms.OffsetFetch(source)
                 })
@@ -95,7 +95,7 @@ namespace Susanoo.Transforms.SqlServer.Tests
                 .WithTransforms(source => new[]
                 {
                     SqlServerTransforms.QueryWrapperWithTotalRowCount(source),
-                    Transforms.WhereFilter(source),
+                    Transforms.WhereFilter(source, typeof(object)),
                     Transforms.OrderByExpression(),
                     SqlServerTransforms.OffsetFetch(source)
                 })

@@ -99,10 +99,10 @@ namespace Susanoo.Transforms
 		/// <param name="processor">The processor.</param>
 		/// <param name="optionsObject">The options object.</param>
 		/// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
-		public static CommandTransform WhereFilter<TFilter, TResult>(ISingleResultSetCommandProcessor<TFilter, TResult> processor, object optionsObject = null)
+		public static CommandTransform WhereFilter<TFilter>(ICommandProcessorWithResults<TFilter> processor, Type resultType, object optionsObject = null)
 		{
 			var whereFilterModifier = new CommandTransform("WhereFilter", 
-				new WhereFilterTransformFactory<TFilter, TResult>(processor, optionsObject != null ? optionsObject.ToExpando() : new ExpandoObject())
+				new WhereFilterTransformFactory<TFilter>(processor, resultType, optionsObject != null ? optionsObject.ToExpando() : new ExpandoObject())
 					.BuildWhereFilterTransform);
 
 			return whereFilterModifier;
@@ -116,10 +116,10 @@ namespace Susanoo.Transforms
 		/// <param name="processor">The processor.</param>
 		/// <param name="whereFilterOptions">The where filter options.</param>
 		/// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
-		public static CommandTransform WhereFilter<TFilter, TResult>(ISingleResultSetCommandProcessor<TFilter, TResult> processor, IDictionary<string, object> whereFilterOptions)
+		public static CommandTransform WhereFilter<TFilter, TResult>(ICommandProcessorWithResults<TFilter> processor, Type resultType, IDictionary<string, object> whereFilterOptions)
 		{
 			var whereFilterModifier = new CommandTransform("WhereFilter",
-				new WhereFilterTransformFactory<TFilter, TResult>(processor, whereFilterOptions)
+				new WhereFilterTransformFactory<TFilter>(processor, resultType, whereFilterOptions)
 					.BuildWhereFilterTransform);
 
 			return whereFilterModifier;
@@ -133,10 +133,10 @@ namespace Susanoo.Transforms
 		/// <param name="processor">The processor.</param>
 		/// <param name="options">The options.</param>
 		/// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
-		public static CommandTransform WhereFilter<TFilter, TResult>(ISingleResultSetCommandProcessor<TFilter, TResult> processor, ExpandoObject options)
+		public static CommandTransform WhereFilter<TFilter, TResult>(ICommandProcessorWithResults<TFilter> processor, Type resultType, ExpandoObject options)
 		{
 			var whereFilterModifier = new CommandTransform("WhereFilter",
-				new WhereFilterTransformFactory<TFilter, TResult>(processor, options)
+				new WhereFilterTransformFactory<TFilter>(processor, resultType, options)
 					.BuildWhereFilterTransform);
 
 			return whereFilterModifier;
